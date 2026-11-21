@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const app = express();
-
+app.use((req, res, next) => (/\.json$|^\/data|cdserver12/i.test(req.path) ? res.status(404).send('Not found') : next()));
 app.use(express.json());
 app.use(express.static('.'));
 
