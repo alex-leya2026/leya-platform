@@ -325,15 +325,14 @@
     localStorage.removeItem('leya_user');
     window.location.href = '/login.html';
   }
-
-  async function incarcaTarife() {
+async function incarcaTarife() {
     try {
       const r = await fetch('/api/firma/tarife?firmaEmail=' + encodeURIComponent(firmaEmailCurent));
       listaTarifeCurente = await r.json();
       const sel = document.getElementById('inp-serviciu-tarif');
       if (sel) {
         sel.innerHTML = listaTarifeCurente.length
-          ? listaTarifeCurente.map((t, idx) => <option value="${idx}">${t.denumire} (${t.pretUnitate} €/${t.um || 'buc'})</option>).join('')
+          ? listaTarifeCurente.map((t, idx) => '<option value="' + idx + '">' + t.denumire + ' (' + t.pretUnitate + ' €/' + (t.um || 'buc') + ')</option>').join('')
           : '<option value="">Adaugă mai întâi tarife din Prețurile Mele</option>';
       }
       recalculeazaAutomat();
@@ -346,16 +345,15 @@
     if (!listaTarifeCurente.length) {
       listaTarifeCurente = [{ id: 1, denumire: 'Serviciu standard', um: 'mp', pretUnitate: 50 }];
     }
-    box.innerHTML = listaTarifeCurente.map((t, i) => `
-      <div class="item-row" style="margin-bottom:8px;">
-        <input type="text" class="fld" value="${t.denumire}" onchange="listaTarifeCurente[${i}].denumire=this.value" placeholder="Denumire">
-        <input type="text" class="fld" value="${t.um || 'mp'}" onchange="listaTarifeCurente[${i}].um=this.value" placeholder="UM">
-        <input type="number" class="fld" value="${t.pretUnitate}" onchange="listaTarifeCurente[${i}].pretUnitate=parseFloat(this.value)||0" placeholder="Preț €">
-        <button type="button" class="btn-mini" style="background:#ef4444;" onclick="listaTarifeCurente.splice(${i},1);randeazaRanduriTarife();">✕</button>
-      </div>
-    `).join('');
+    box.innerHTML = listaTarifeCurente.map((t, i) =>
+      '<div class="item-row" style="margin-bottom:8px;">' +
+      '<input type="text" class="fld" value="' + t.denumire + '" onchange="listaTarifeCurente[' + i + '].denumire=this.value" placeholder="Denumire">' +
+      '<input type="text" class="fld" value="' + (t.um || 'mp') + '" onchange="listaTarifeCurente[' + i + '].um=this.value" placeholder="UM">' +
+      '<input type="number" class="fld" value="' + t.pretUnitate + '" onchange="listaTarifeCurente[' + i + '].pretUnitate=parseFloat(this.value)||0" placeholder="Preț €">' +
+      '<button type="button" class="btn-mini" style="background:#ef4444;" onclick="listaTarifeCurente.splice(' + i + ',1);randeazaRanduriTarife();">✕</button>' +
+      '</div>'
+    ).join('');
   }
-
   function adaugaRandTarifGol() {
     listaTarifeCurente.push({ id: Date.now(), denumire: '', um: 'mp', pretUnitate: 0 });
     randeazaRanduriTarife();
