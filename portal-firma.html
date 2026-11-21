@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEYA - Autentificare Platformă</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #1e293b; }
+        .login-box { background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .login-box h2 { margin: 0 0 8px 0; color: #0f172a; text-align: center; }
+        .login-box p { margin: 0 0 24px 0; color: #64748b; font-size: 14px; text-align: center; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+        input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        button { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        .eroare { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>LEYA Platform </h2>
+        <p>Introdu userul și parola pentru acces</p>
+
+        <div id="mesaj-eroare" class="eroare"></div>
+
+        <form onsubmit="conectare(event)">
+            <label>User / E-mail</label>
+            <input type="text" id="user-input" placeholder="ex: admin@leya.ro" required>
+
+            <label>Parolă</label>
+            <input type="password" id="parola-input" placeholder="••••••" required>
+
+            <button type="submit">Intră în cont</button>
+        </form>
+    </div>
+
+    <script>
+        // Șterge orice sesiune veche blocată când deschizi pagina de login
+        localStorage.removeItem('leya_rol');
+        localStorage.removeItem('leya_nume');
+        localStorage.removeItem('leya_email');
+
+        async function conectare(event) {
+            event.preventDefault();
+            const casutaEroare = document.getElementById('mesaj-eroare');
+            casutaEroare.style.display = 'none';
+
+            const email = document.getElementById('user-input').value;
+            const parola = document.getElementById('parola-input').value;
+
+            try {
+                const raspuns = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, parola })
+                });
+
+                const rezultat = await raspuns.json();
+
+                if (rezultat.succes) {
+                    localStorage.setItem('leya_rol', rezultat.rol);
+                    localStorage.setItem('leya_nume', rezultat.nume);
+                    localStorage.setItem('leya_email', rezultat.email);
+
+                    if (rezultat.rol === 'ADMIN') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'client-panel.html';
+                    }
+                } else {
+                    casutaEroare.innerText = rezultat.mesaj;
+                    casutaEroare.style.display = 'block';
+                }
+            } catch (err) {
+                casutaEroare.innerText = "Serverul nu raspunde! Verifica terminalul din VS Code.";
+                casutaEroare.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
