@@ -260,7 +260,11 @@
     </select>
     <label class="fld-label">Plan & Zile valabilitate:</label>
     <div style="display:flex; gap:6px;">
-      <input type="text" class="fld" id="frm-plan" value="Standard (59€/lună)">
+      <select class="fld" id="frm-plan">
+        <option value="Start (29€/lună)">Start (29€/lună) — 1 Domeniu, max 15 clienți</option>
+        <option value="Standard (59€/lună)" selected>Standard (59€/lună) — 3 Domenii, nelimitat</option>
+        <option value="Pro (99€/lună)">Pro (99€/lună) — Toate 5 Domeniile + Echipă</option>
+      </select>
       <input type="number" class="fld" id="frm-zile" value="30" style="width:90px;">
     </div>
     <button class="btn-full" onclick="salveazaFirmaNoua()">Activează Firmă</button>

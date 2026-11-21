@@ -180,55 +180,91 @@ app.post('/api/firma/tarife', (req, res) => {
     res.json({ succes: true, mesaj: "Tarifele tale au fost salvate cu succes!" });
 });
 
-// 3. CREARE FIRMĂ CU ABONAMENT LUNAR
+// 3. CREARE FIRMĂ CU ABONAMENT LUNAR ȘI LIMITE PE PACHET
 app.post('/api/admin/creare-firma', (req, res) => {
-    const nume = (req.body.nume || '').trim();
-    const email = (req.body.email || '').trim().toLowerCase();
-    const parola = (req.body.parola || '').trim();
-    const domeniu = (req.body.domeniu || 'CONSTRUCTII').toUpperCase();
-    const plan = req.body.plan || 'Standard (59€/lună)';
-    const zile = parseInt(req.body.zile) || 30;
+  const nume = (req.body.nume || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
+  const parola = (req.body.parola || '').trim();
+  const domeniu = (req.body.domeniu || 'CONSTRUCTII').toUpperCase();
+  const plan = req.body.plan || 'Standard (59€/lună)';
+  const zile = parseInt(req.body.zile) || 30;
 
-    if (!nume || !email || !parola) {
-        return res.status(400).json({ succes: false, mesaj: "Completeaza numele firmei, userul si parola!" });
+  if (!nume || !email || !parola) {
+    return res.status(400).json({ succes: false, mesaj: 'Completeaza numele firmei, userul si parola!' });
+  }
+
+  const utilizatori = incarcaUtilizatori();
+  if (utilizatori.find(u => u.email.toLowerCase() === email)) {
+    return res.status(400).json({ succes: false, mesaj: 'Acest user exista deja!' });
+  }
+
+  const planUpper = plan.toUpperCase();
+  let limite = { maxClienti: 15, maxOferte: 15, maxDomenii: 1, conturiEchipa: false, prioritate: 'NORMAL' };
+  let domeniiActive = [domeniu];
+
+  if (planUpper.includes('PRO')) {
+    limite = { maxClienti: 999999, maxOferte: 999999, maxDomenii: 5, conturiEchipa: true, prioritate: 'MAXIMA_24_7' };
+    domeniiActive = Object.keys(SABLON_DOMENII);
+  } else if (planUpper.includes('STANDARD')) {
+    limite = { maxClienti: 999999, maxOferte: 999999, maxDomenii: 3, conturiEchipa: false, prioritate: 'PRIORITAR' };
+    const toateDom = Object.keys(SABLON_DOMENII);
+    domeniiActive = [domeniu, ...toateDom.filter(d => d !== domeniu)].slice(0, 3);
+  }
+
+  const dataExpirare = dataPesteZile(zile);
+  utilizatori.push({
+    nume, email, parola, telefon: '-', rol: 'FIRMA',
+    domeniu, domeniiActive, firmaEmail: email, plan, limite, dataExpirare
+  });
+  fs.writeFileSync(FISIER_UTILIZATORI, JSON.stringify(utilizatori, null, 2));
+
+  const tarife = incarcaTarife();
+  let tarifeInitiale = [];
+  domeniiActive.forEach((dom, idxDom) => {
+    const lista = SABLON_DOMENII[dom] || [];
+    lista.forEach((item, idxItem) => {
+      tarifeInitiale.push({ ...item, id: (idxDom + 1) * 100 + idxItem, denumire: '[' + dom + '] ' + item.denumire });
+    });
+  });
+  tarife[email] = tarifeInitiale.length ? tarifeInitiale : JSON.parse(JSON.stringify(SABLON_DOMENII.CONSTRUCTII));
+  fs.writeFileSync(FISIER_TARIFE, JSON.stringify(tarife, null, 2));
+
+  res.json({ succes: true, mesaj: 'Firma ' + nume + ' a fost creata cu planul ' + plan + ' (' + domeniiActive.length + ' domenii active)!' });
+});
+
+// 4. CLIENTI FINALI (CU VERIFICARE LIMITĂ ABONAMENT)
+app.post('/api/admin/creare-client', (req, res) => {
+  const nume = (req.body.nume || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
+  const parola = (req.body.parola || '').trim();
+  const telefon = (req.body.telefon || '-').trim();
+  const firmaEmail = (req.body.firmaEmail || 'admin@leya.ro').trim().toLowerCase();
+
+  if (!nume || !email || !parola) {
+    return res.status(400).json({ succes: false, mesaj: 'Completeaza numele, userul si parola clientului!' });
+  }
+
+  const utilizatori = incarcaUtilizatori();
+  if (utilizatori.find(u => u.email.toLowerCase() === email)) {
+    return res.status(400).json({ succes: false, mesaj: 'Acest user exista deja!' });
+  }
+
+  const firma = utilizatori.find(u => u.email.toLowerCase() === firmaEmail && u.rol === 'FIRMA');
+  if (firma && firma.limite) {
+    const clientiExistenti = utilizatori.filter(u => u.rol === 'CLIENT' && (u.firmaEmail || '').toLowerCase() === firmaEmail).length;
+    if (clientiExistenti >= firma.limite.maxClienti) {
+      return res.status(403).json({
+        succes: false,
+        mesaj: 'Ai atins limita de ' + firma.limite.maxClienti + ' clienti a abonamentului ' + firma.plan + '! Fa upgrade la STANDARD sau PRO pentru clienti nelimitati.'
+      });
     }
+  }
 
-    const utilizatori = incarcaUtilizatori();
-    if (utilizatori.find(u => u.email.toLowerCase() === email)) {
-        return res.status(400).json({ succes: false, mesaj: "Acest user exista deja!" });
-    }
+  utilizatori.push({ nume, email, parola, telefon, rol: 'CLIENT', firmaEmail });
+  fs.writeFileSync(FISIER_UTILIZATORI, JSON.stringify(utilizatori, null, 2));
 
-    const dataExpirare = dataPesteZile(zile);
-    utilizatori.push({ nume, email, parola, telefon: '-', rol: 'FIRMA', domeniu, firmaEmail: email, plan, dataExpirare });
-    fs.writeFileSync(FISIER_UTILIZATORI, JSON.stringify(utilizatori, null, 2));
-
-    const tarife = incarcaTarife();
-    tarife[email] = JSON.parse(JSON.stringify(SABLON_DOMENII[domeniu] || SABLON_DOMENII['CONSTRUCTII']));
-    fs.writeFileSync(FISIER_TARIFE, JSON.stringify(tarife, null, 2));
-
-    res.json({ succes: true, mesaj: "Firma " + nume + " a fost creata cu planul " + plan + " (expira la " + dataExpirare + ")!" });
+  res.json({ succes: true, mesaj: 'Contul pentru ' + nume + ' a fost creat!' });
 });
-
-// LISTARE FIRME + CALCUL ZILE RĂMASE PENTRU ALERTĂ
-app.get('/api/admin/firme', (req, res) => {
-    const utilizatori = incarcaUtilizatori();
-    const firme = utilizatori.filter(u => u.rol === 'FIRMA').map(f => ({
-        ...f,
-        zileRamase: calculeazaZileRamase(f.dataExpirare)
-    }));
-    res.json(firme);
-});
-
-// PRELUNGIRE ABONAMENT CU 30 DE ZILE (1 CLICK DIN ADMIN)
-app.post('/api/admin/prelungire-abonament', (req, res) => {
-    const emailFirma = (req.body.email || '').toLowerCase();
-    const utilizatori = incarcaUtilizatori();
-    const firma = utilizatori.find(u => u.email.toLowerCase() === emailFirma && u.rol === 'FIRMA');
-
-fs.writeFileSync(FISIER_UTILIZATORI, JSON.stringify(utilizatori, null, 2));
-    res.json({ succes: true, mesaj: "Abonamentul pentru " + firma.nume + " a fost prelungit pana la " + firma.dataExpirare + "!" });
-});
-
 // 4. CLIENTI FINALI
 app.post('/api/admin/creare-client', (req, res) => {
     const nume = (req.body.nume || '').trim();
