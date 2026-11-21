@@ -1,0 +1,82 @@
+});
+app.listen(8080, () => {
+console.log("Platforma LEYA Multi-Firma ruleaza curat pe http://127.0.0.1:8080");
+});
+
+---
+
+###  Pasul 2: Pune acest cod în login.html (Autentificare unică)
+
+Deschide *login.html* în VS Code (Ctrl + A → Paste → Ctrl + S):
+
+```html
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEYA — Conectare Platformă</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #1e293b; }
+        .login-box { background: white; padding: 36px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+        .logo { width: 46px; height: 46px; background: linear-gradient(135deg, #2563eb, #38bdf8); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; margin: 0 auto 12px auto; }
+        h2 { margin: 0 0 6px 0; text-align: center; color: #0f172a; }
+        p { margin: 0 0 22px 0; text-align: center; color: #64748b; font-size: 13.5px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #334155; }
+        input { width: 100%; padding: 11px 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 13px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        .err { background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">LY</div>
+        <h2>Platforma LEYA</h2>
+        <p>Autentificare Firme, Administratori și Clienți</p>
+        <div id="err-box" class="err"></div>
+        <form onsubmit="conectare(event)">
+            <label>User / E-mail</label>
+            <input type="text" id="u-email" placeholder="ex: admin@leya.ro" required>
+            <label>Parolă</label>
+            <input type="password" id="u-parola" placeholder="••••••" required>
+            <button type="submit">Intră în platformă</button>
+        </form>
+    </div>
+
+    <script>
+        localStorage.clear();
+        async function conectare(e) {
+            e.preventDefault();
+            const err = document.getElementById('err-box');
+            err.style.display = 'none';
+
+            const email = document.getElementById('u-email').value;
+            const parola = document.getElementById('u-parola').value;
+
+            const r = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, parola })
+            });
+            const rez = await r.json();
+
+            if (rez.succes) {
+                localStorage.setItem('leya_rol', rez.rol);
+                localStorage.setItem('leya_nume', rez.nume);
+                localStorage.setItem('leya_email', rez.email);
+                localStorage.setItem('leya_domeniu', rez.domeniu);
+
+                if (rez.rol === 'ADMIN' || rez.rol === 'FIRMA') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'client-panel.html';
+                }
+            } else {
+                err.innerText = rez.mesaj;
+                err.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

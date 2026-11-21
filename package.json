@@ -1,0 +1,11 @@
+{
+  "name": "leya-platform",
+  "version": "1.0.0",
+  "main": "cdserver12.js",
+  "scripts": {
+    "start": "node cdserver12.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}
