@@ -28,11 +28,10 @@
         <div id="err-box" class="err"></div>
         <form onsubmit="conectare(event)">
             <label>User / E-mail</label>
-            <input type="text" id="u-email" placeholder="ex: admin@leya.ro" required>
-            <label>Parolă</label>
-            <div style="position:relative;">
+           <label>Parolă</label>
+      <div style="position:relative; display:flex; align-items:center;">
         <input type="password" id="u-parola" placeholder="••••••••" required style="padding-right:42px;">
-        <button type="button" onclick="comutaParola()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; width:auto; margin:0; padding:0;" title="Arată / Ascunde parola"></button>
+        <span onclick="comutaParola()" style="position:absolute; right:12px; cursor:pointer; font-size:19px; user-select:none;" title="Arată / Ascunde parola"></span>
       </div>
             <button type="submit">Intră în platformă</button>
         </form>
