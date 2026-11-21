@@ -27,13 +27,18 @@
         <p>Autentificare Firme, Administratori și Clienți</p>
         <div id="err-box" class="err"></div>
         <form onsubmit="conectare(event)">
-            <label>User / E-mail</label>
-          <label>Parolă</label>
-      <div style="position:relative; width:100%;">
-        <input type="password" id="u-parola" placeholder="••••••••" required style="padding-right:70px; width:100%; box-sizing:border-box;">
-        <span id="btn-ochi" onclick="comutaParola()" style="position:absolute; right:10px; top:38%; transform:translateY(-50%); cursor:pointer; font-size:12px; font-weight:700; color:#2563eb; background:#eff6ff; padding:3px 7px; border-radius:5px; user-select:none;"> Arată</span>
-      </div>
-        </form>
+        <label>User / E-mail</label>
+        <input type="text" id="u-email" placeholder="ex: firma@domeniu.ro" required>
+
+        <label>Parolă</label>
+        <div style="position:relative; width:100%;">
+          <input type="password" id="u-parola" placeholder="••••••••" required style="padding-right:75px; width:100%; box-sizing:border-box;">
+          <span id="btn-ochi" onclick="comutaParola()" style="position:absolute; right:10px; top:38%; transform:translateY(-50%); cursor:pointer; font-size:12px; font-weight:700; color:#2563eb; background:#eff6ff; padding:3px 7px; border-radius:5px; user-select:none;"> Arată</span>
+        </div>
+
+        <button type="submit">Intră în platformă</button>
+      </form>
+        
     </div>
 
     <script>
