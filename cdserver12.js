@@ -1,8 +1,9 @@
 const express = require('express');
 const fs = require('fs');
 const app = express();
-app.use((req, res, next) => (/\.json$|^\/data|cdserver12/i.test(req.path) ? res.status(404).send('Not found') : next()));
+
 app.use(express.json());
+app.use((req, res, next) => (/\.json$|^\/data|cdserver12/i.test(req.path) ? res.status(404).send('Not found') : next()));
 app.use(express.static('.'));
 
 const FOLDER_DATE = fs.existsSync('/app/data') ? '/app/data' : '.';
@@ -60,13 +61,13 @@ function incarcaUtilizatori() {
         try { lista = JSON.parse(fs.readFileSync(FISIER_UTILIZATORI, 'utf8')); } catch (e) {}
     }
     const conturiBaza = [
-        { email: 'admin@leya.ro', parola: '123456', nume: 'LEYA Master Admin', telefon: '-', rol: 'ADMIN', domeniu: 'PVC', firmaEmail: 'admin@leya.ro' },
-        { email: 'pvc@leya.ro', parola: '123456', nume: 'ThermoPVC Construct SRL', telefon: '0721 100 200', rol: 'FIRMA', domeniu: 'PVC', firmaEmail: 'pvc@leya.ro', plan: 'Pro (99€/lună)', dataExpirare: dataPesteZile(25) },
-        { email: 'tabla@leya.ro', parola: '123456', nume: 'Acoperișuri & Tablă Pro', telefon: '0722 200 300', rol: 'FIRMA', domeniu: 'TABLA', firmaEmail: 'tabla@leya.ro', plan: 'Standard (59€/lună)', dataExpirare: dataPesteZile(2) },
-        { email: 'garduri@leya.ro', parola: '123456', nume: 'Garduri Metalice Rapid', telefon: '0723 300 400', rol: 'FIRMA', domeniu: 'GARDURI', firmaEmail: 'garduri@leya.ro', plan: 'Basic (29€/lună)', dataExpirare: dataPesteZile(18) },
-        { email: 'constructii@leya.ro', parola: '123456', nume: 'BuildMaster Construcții', telefon: '0724 400 500', rol: 'FIRMA', domeniu: 'CONSTRUCTII', firmaEmail: 'constructii@leya.ro', plan: 'Pro (99€/lună)', dataExpirare: dataPesteZile(30) },
-        { email: 'curatenie@leya.ro', parola: '123456', nume: 'CleanExpress Curățenie', telefon: '0725 500 600', rol: 'FIRMA', domeniu: 'CURATENIE', firmaEmail: 'curatenie@leya.ro', plan: 'Standard (59€/lună)', dataExpirare: dataPesteZile(3) },
-        { email: 'client@yahoo.com', parola: '123456', nume: 'Andrei Popescu', telefon: '0722 123 456', rol: 'CLIENT', firmaEmail: 'admin@leya.ro' }
+        { email: 'admin@leya.ro', parola: 'LeyaAdmin#2026!Secure', nume: 'LEYA Master Admin', telefon: '-', rol: 'ADMIN', domeniu: 'PVC', firmaEmail: 'admin@leya.ro' },
+        { email: 'pvc@leya.ro', parola: 'LeyaAdmin#0000!Secure', nume: 'ThermoPVC Construct SRL', telefon: '0721 100 200', rol: 'FIRMA', domeniu: 'PVC', firmaEmail: 'pvc@leya.ro', plan: 'Pro (99€/lună)', dataExpirare: dataPesteZile(25) },
+        { email: 'tabla@leya.ro', parola: 'LeyaAdmin#0001!Secure', nume: 'Acoperișuri & Tablă Pro', telefon: '0722 200 300', rol: 'FIRMA', domeniu: 'TABLA', firmaEmail: 'tabla@leya.ro', plan: 'Standard (59€/lună)', dataExpirare: dataPesteZile(2) },
+        { email: 'garduri@leya.ro', parola: 'LeyaAdmin#0002!Secure', nume: 'Garduri Metalice Rapid', telefon: '0723 300 400', rol: 'FIRMA', domeniu: 'GARDURI', firmaEmail: 'garduri@leya.ro', plan: 'Basic (29€/lună)', dataExpirare: dataPesteZile(18) },
+        { email: 'constructii@leya.ro', parola: 'LeyaAdmin#0003!Secure', nume: 'BuildMaster Construcții', telefon: '0724 400 500', rol: 'FIRMA', domeniu: 'CONSTRUCTII', firmaEmail: 'constructii@leya.ro', plan: 'Pro (99€/lună)', dataExpirare: dataPesteZile(30) },
+        { email: 'curatenie@leya.ro', parola: 'LeyaAdmin#0004!Secure', nume: 'CleanExpress Curățenie', telefon: '0725 500 600', rol: 'FIRMA', domeniu: 'CURATENIE', firmaEmail: 'curatenie@leya.ro', plan: 'Standard (59€/lună)', dataExpirare: dataPesteZile(3) },
+        { email: 'client@yahoo.com', parola: 'LeyaAdmin#0005!Secure', nume: 'Andrei Popescu', telefon: '0722 123 456', rol: 'CLIENT', firmaEmail: 'admin@leya.ro' }
     ];
 
     let modificat = false;

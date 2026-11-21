@@ -219,4 +219,322 @@
     </div>
 
     <div class="modal-overlay" id="modal-client">
-        <div class="modal-card">
+  <div class="modal-card">
+    <h3 style="margin:0 0 6px 0;">Creează User & Parolă Client</h3>
+    <p style="margin:0 0 14px 0; font-size:12px; color:#64748b;">Adaugă un client nou cu acces izolat în portal.</p>
+    <label class="fld-label">Nume Client / Companie:</label>
+    <input type="text" class="fld" id="cli-nume" placeholder="ex: Popescu Ion / Construct SRL">
+    <label class="fld-label">Email (User de conectare):</label>
+    <input type="email" class="fld" id="cli-email" placeholder="ex: client@firma.ro">
+    <label class="fld-label">Parolă puternică:</label>
+    <div style="display:flex; gap:6px; margin-bottom:10px;">
+      <input type="text" class="fld" id="cli-parola" style="margin-bottom:0;" placeholder="Minim 8 caractere">
+      <button type="button" class="btn-mini" onclick="genereazaParolaPuternica('cli-parola')">Generează</button>
+    </div>
+    <label class="fld-label">Telefon:</label>
+    <input type="text" class="fld" id="cli-telefon" placeholder="ex: 0722123456">
+    <button class="btn-full" onclick="salveazaClientNou()">Creează Cont Client</button>
+    <button class="btn-full" style="background:#64748b;" onclick="inchideModalClient()">Închide</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-firma">
+  <div class="modal-card">
+    <h3 style="margin:0 0 6px 0;">Creează Firmă cu Abonament</h3>
+    <p style="margin:0 0 14px 0; font-size:12px; color:#64748b;">Configurează o firmă parteneră cu domeniu și tarife proprii.</p>
+    <label class="fld-label">Nume Firmă:</label>
+    <input type="text" class="fld" id="frm-nume" placeholder="ex: ThermoPVC Construct SRL">
+    <label class="fld-label">Email Firmă:</label>
+    <input type="email" class="fld" id="frm-email" placeholder="ex: contact@firma.ro">
+    <label class="fld-label">Parolă:</label>
+    <div style="display:flex; gap:6px; margin-bottom:10px;">
+      <input type="text" class="fld" id="frm-parola" style="margin-bottom:0;" placeholder="Parolă puternică">
+      <button type="button" class="btn-mini" onclick="genereazaParolaPuternica('frm-parola')">Generează</button>
+    </div>
+    <label class="fld-label">Domeniu activitate:</label>
+    <select class="fld" id="frm-domeniu">
+      <option value="CONSTRUCTII">CONSTRUCTII</option>
+      <option value="TABLA">TABLA</option>
+      <option value="GARDURI">GARDURI</option>
+      <option value="CURATENIE">CURATENIE</option>
+    </select>
+    <label class="fld-label">Plan & Zile valabilitate:</label>
+    <div style="display:flex; gap:6px;">
+      <input type="text" class="fld" id="frm-plan" value="Standard (59€/lună)">
+      <input type="number" class="fld" id="frm-zile" value="30" style="width:90px;">
+    </div>
+    <button class="btn-full" onclick="salveazaFirmaNoua()">Activează Firmă</button>
+    <button class="btn-full" style="background:#64748b;" onclick="inchideModalFirma()">Închide</button>
+  </div>
+</div>
+
+<script>
+  const userCurent = JSON.parse(localStorage.getItem('userLeya') || localStorage.getItem('leya_user') || 'null');
+  const firmaEmailCurent = (userCurent && userCurent.email) ? userCurent.email : 'admin@leya.ro';
+  const esteMasterAdmin = !userCurent || userCurent.rol === 'ADMIN' || firmaEmailCurent === 'admin@leya.ro';
+  let listaTarifeCurente = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (userCurent) {
+      const elNume = document.getElementById('side-admin-name');
+      const elEmail = document.getElementById('side-admin-email');
+      const elDom = document.getElementById('side-domeniu-text');
+      const elBadge = document.getElementById('badge-domeniu-dreapta');
+      if (elNume) elNume.textContent = userCurent.nume || 'Administrator';
+      if (elEmail) elEmail.textContent = userCurent.email || firmaEmailCurent;
+      if (elDom && userCurent.domeniu) elDom.textContent = 'DOMENIU: ' + userCurent.domeniu;
+      if (elBadge && userCurent.domeniu) elBadge.textContent = 'DOMENIU ' + userCurent.domeniu;
+    }
+
+    if (esteMasterAdmin) {
+      const btnTopFirma = document.getElementById('btn-top-firma');
+      const menuFirme = document.getElementById('id="btn-menu-firme"') || document.getElementById('btn-menu-firme');
+      const boxFirme = document.getElementById('box-lista-firme-admin');
+      if (btnTopFirma) btnTopFirma.style.display = 'inline-block';
+      if (menuFirme) menuFirme.style.display = 'flex';
+      if (boxFirme) boxFirme.style.display = 'block';
+      incarcaFirmeAdmin();
+    }
+
+    incarcaTarife();
+    incarcaClienti();
+    incarcaOferte();
+  });
+
+  function genereazaParolaPuternica(idInput) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+    let pass = 'Leya#';
+    for (let i = 0; i < 8; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    document.getElementById(idInput).value = pass;
+  }
+
+  function deschideModalClient() { document.getElementById('modal-client').style.display = 'flex'; }
+  function inchideModalClient() { document.getElementById('modal-client').style.display = 'none'; }
+
+  function deschideModalFirma() { document.getElementById('modal-firma').style.display = 'flex'; }
+  function inchideModalFirma() { document.getElementById('modal-firma').style.display = 'none'; }
+
+  function deschideModalTarife() {
+    document.getElementById('modal-tarife').style.display = 'flex';
+    randeazaRanduriTarife();
+  }
+  function inchideModalTarife() { document.getElementById('modal-tarife').style.display = 'none'; }
+
+  function iesireCont() {
+    localStorage.removeItem('userLeya');
+    localStorage.removeItem('leya_user');
+    window.location.href = '/login.html';
+  }
+
+  async function incarcaTarife() {
+    try {
+      const r = await fetch('/api/firma/tarife?firmaEmail=' + encodeURIComponent(firmaEmailCurent));
+      listaTarifeCurente = await r.json();
+      const sel = document.getElementById('inp-serviciu-tarif');
+      if (sel) {
+        sel.innerHTML = listaTarifeCurente.length
+          ? listaTarifeCurente.map((t, idx) => <option value="${idx}">${t.denumire} (${t.pretUnitate} €/${t.um || 'buc'})</option>).join('')
+          : '<option value="">Adaugă mai întâi tarife din Prețurile Mele</option>';
+      }
+      recalculeazaAutomat();
+    } catch (e) { console.error(e); }
+  }
+
+  function randeazaRanduriTarife() {
+    const box = document.getElementById('container-randuri-tarife');
+    if (!box) return;
+    if (!listaTarifeCurente.length) {
+      listaTarifeCurente = [{ id: 1, denumire: 'Serviciu standard', um: 'mp', pretUnitate: 50 }];
+    }
+    box.innerHTML = listaTarifeCurente.map((t, i) => `
+      <div class="item-row" style="margin-bottom:8px;">
+        <input type="text" class="fld" value="${t.denumire}" onchange="listaTarifeCurente[${i}].denumire=this.value" placeholder="Denumire">
+        <input type="text" class="fld" value="${t.um || 'mp'}" onchange="listaTarifeCurente[${i}].um=this.value" placeholder="UM">
+        <input type="number" class="fld" value="${t.pretUnitate}" onchange="listaTarifeCurente[${i}].pretUnitate=parseFloat(this.value)||0" placeholder="Preț €">
+        <button type="button" class="btn-mini" style="background:#ef4444;" onclick="listaTarifeCurente.splice(${i},1);randeazaRanduriTarife();">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function adaugaRandTarifGol() {
+    listaTarifeCurente.push({ id: Date.now(), denumire: '', um: 'mp', pretUnitate: 0 });
+    randeazaRanduriTarife();
+  }
+
+  async function salveazaTarifeFirma() {
+    try {
+      const r = await fetch('/api/firma/tarife', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firmaEmail: firmaEmailCurent, tarife: listaTarifeCurente })
+      });
+      const data = await r.json();
+      alert(data.mesaj || 'Tarife salvate!');
+      inchideModalTarife();
+      incarcaTarife();
+    } catch (e) { alert('Eroare la salvarea tarifelor'); }
+  }
+
+  function recalculeazaAutomat() {
+    const sel = document.getElementById('inp-serviciu-tarif');
+    const cantEl = document.getElementById('inp-cantitate');
+    const boxEl = document.getElementById('box-calcul-live');
+    const umEl = document.getElementById('lbl-um');
+    if (!sel || !cantEl || !boxEl) return;
+    const t = listaTarifeCurente.at(parseInt(sel.value));
+    const cant = parseFloat(cantEl.value) || 0;
+    if (!t) { boxEl.textContent = 'Total: 0 €'; return; }
+    if (umEl) umEl.textContent = t.um || 'buc';
+    const total = (cant * (parseFloat(t.pretUnitate) || 0)).toFixed(2);
+    boxEl.textContent = 'Total: ' + total + ' €';
+  }
+
+  async function salveazaClientNou() {
+    const nume = document.getElementById('cli-nume').value.trim();
+    const email = document.getElementById('cli-email').value.trim();
+    const parola = document.getElementById('cli-parola').value.trim();
+    const telefon = document.getElementById('cli-telefon').value.trim();
+    if (!nume || !email || !parola) return alert('Completează numele, emailul și parola!');
+
+    const r = await fetch('/api/admin/creare-client', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nume, email, parola, telefon, firmaEmail: firmaEmailCurent })
+    });
+    const data = await r.json();
+    alert(data.mesaj || (data.succes ? 'Client creat!' : 'Eroare'));
+    if (data.succes) {
+      document.getElementById('cli-nume').value = '';
+      document.getElementById('cli-email').value = '';
+      document.getElementById('cli-parola').value = '';
+      document.getElementById('cli-telefon').value = '';
+      inchideModalClient();
+      incarcaClienti();
+    }
+  }
+
+  async function incarcaClienti() {
+    try {
+      const q = esteMasterAdmin ? '' : ('?firmaEmail=' + encodeURIComponent(firmaEmailCurent));
+      const r = await fetch('/api/admin/clienti' + q);
+      const clienti = await r.json();
+      const sel = document.getElementById('inp-client');
+      if (sel) {
+        sel.innerHTML = clienti.length
+          ? clienti.map(c => '<option value="' + c.email + '">' + c.nume + ' (' + c.email + ')</option>').join('')
+          : '<option value="">Niciun client creat încă</option>';
+      }
+      const kpis = document.querySelectorAll('.kpi');
+      if (kpis.item(3)) {
+        const num = kpis.item(3).querySelector('div:nth-child(2) div:nth-child(2)');
+        if (num) num.textContent = clienti.length;
+      }
+      const carduri = document.querySelectorAll('.four-col-work .card');
+      const cardClienti = carduri.item(3);
+      if (cardClienti) {
+        let listBox = document.getElementById('lista-clienti-render');
+        if (!listBox) {
+          listBox = document.createElement('div');
+          listBox.id = 'lista-clienti-render';
+          cardClienti.appendChild(listBox);
+        }
+        listBox.innerHTML = clienti.length
+          ? clienti.map(c => '<div style="padding:8px 0; border-bottom:1px solid #f1f5f9; font-size:12px;"><strong>' + c.nume + '</strong><br><span style="color:#64748b;">' + c.email + ' • ' + (c.telefon || '-') + '</span></div>').join('')
+          : '<p style="font-size:12px; color:#94a3b8;">Apasă "+ Client nou" pentru a crea un cont.</p>';
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async function trimiteOfertaCalculata() {
+    const clientEmail = document.getElementById('inp-client').value;
+    const idx = parseInt(document.getElementById('inp-serviciu-tarif').value);
+    const cant = parseFloat(document.getElementById('inp-cantitate').value) || 0;
+    const status = document.getElementById('inp-status').value;
+    const t = listaTarifeCurente.at(idx);
+    if (!clientEmail || !t) return alert('Selectează clientul și serviciul!');
+    const pret = (cant * (parseFloat(t.pretUnitate) || 0)).toFixed(2) + ' €';
+    const produs = t.denumire + ' (' + cant + ' ' + (t.um || 'buc') + ' x ' + t.pretUnitate + ' €)';
+
+    const r = await fetch('/api/admin/creare-oferta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firmaEmail: firmaEmailCurent, clientEmail, produs, pret, status })
+    });
+    const data = await r.json();
+    alert(data.mesaj || 'Ofertă trimisă!');
+    incarcaOferte();
+  }
+
+  async function incarcaOferte() {
+    try {
+      const q = esteMasterAdmin ? '' : ('?firmaEmail=' + encodeURIComponent(firmaEmailCurent));
+      const r = await fetch('/api/admin/oferte' + q);
+      const oferte = await r.json();
+      const box = document.getElementById('box-ultimele-cereri');
+      if (box) {
+        box.innerHTML = oferte.length
+          ? oferte.slice().reverse().map(o => '<div style="padding:8px 0; border-bottom:1px solid #f1f5f9; font-size:12px;"><strong>' + (o.clientNume || o.clientEmail) + '</strong> — ' + o.produs + '<br><span style="color:#2563eb; font-weight:700;">' + o.pret + '</span> • <span>' + o.status + '</span></div>').join('')
+          : '<p style="font-size:12px; color:#94a3b8;">Nu există oferte încă.</p>';
+      }
+      const kpis = document.querySelectorAll('.kpi');
+      const inAsteptare = oferte.filter(o => o.status === 'In asteptare').length;
+      if (kpis.item(0)) kpis.item(0).querySelector('div:nth-child(2) div:nth-child(2)').textContent = oferte.length;
+      if (kpis.item(1)) kpis.item(1).querySelector('div:nth-child(2) div:nth-child(2)').textContent = oferte.length;
+      if (kpis.item(2)) kpis.item(2).querySelector('div:nth-child(2) div:nth-child(2)').textContent = inAsteptare;
+    } catch (e) { console.error(e); }
+  }
+
+  async function salveazaFirmaNoua() {
+    const nume = document.getElementById('frm-nume').value.trim();
+    const email = document.getElementById('frm-email').value.trim();
+    const parola = document.getElementById('frm-parola').value.trim();
+    const domeniu = document.getElementById('frm-domeniu').value;
+    const plan = document.getElementById('frm-plan').value;
+    const zile = document.getElementById('frm-zile').value;
+    if (!nume || !email || !parola) return alert('Completează toate câmpurile firmei!');
+
+    const r = await fetch('/api/admin/creare-firma', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nume, email, parola, domeniu, plan, zile })
+    });
+    const data = await r.json();
+    alert(data.mesaj || 'Firmă creată!');
+    if (data.succes) { inchideModalFirma(); incarcaFirmeAdmin(); }
+  }
+
+  async function incarcaFirmeAdmin() {
+    try {
+      const r = await fetch('/api/admin/firme');
+      const firme = await r.json();
+      const box = document.getElementById('lista-firme-render');
+      if (!box) return;
+      box.innerHTML = firme.map(f =>
+        '<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9; font-size:12px;">' +
+        '<div><strong>' + f.nume + '</strong> (' + f.email + ') — <span style="color:#16a34a;">' + f.zileRamase + ' zile rămase</span></div>' +
+        '<button class="btn-mini" onclick="prelungesteFirma(\'' + f.email + '\')">+30 zile</button>' +
+        '</div>'
+      ).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  async function prelungesteFirma(emailFirma) {
+    const r = await fetch('/api/admin/prelungire-abonament', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emailFirma })
+    });
+    const data = await r.json();
+    alert(data.mesaj);
+    incarcaFirmeAdmin();
+  }
+
+  function filtreazaLive() {
+    const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+    document.querySelectorAll('.four-col-work .card div').forEach(el => {
+      if (el.innerText) el.style.opacity = el.innerText.toLowerCase().includes(q) ? '1' : '0.35';
+    });
+  }
+</script>
+</body>
+</html>
