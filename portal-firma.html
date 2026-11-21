@@ -1,81 +1,109 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEYA - Autentificare Platformă</title>
-    <style>
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #1e293b; }
-        .login-box { background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .login-box h2 { margin: 0 0 8px 0; color: #0f172a; text-align: center; }
-        .login-box p { margin: 0 0 24px 0; color: #64748b; font-size: 14px; text-align: center; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
-        input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        button { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        button:hover { background: #1d4ed8; }
-        .eroare { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; text-align: center; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Firmă — Platforma LEYA</title>
+  <style>
+    body { margin:0; font-family:'Segoe UI',sans-serif; background:#f1f5f9; color:#0f172a; }
+    .top { background:#0f172a; color:#fff; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; }
+    .logo { color:#fff; text-decoration:none; font-weight:800; display:flex; align-items:center; gap:8px; }
+    .logo span { background:#2563eb; padding:4px 8px; border-radius:6px; font-size:12px; }
+    .wrap { max-width:1050px; margin:24px auto; padding:0 16px; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin-bottom:24px; }
+    .stat { background:#fff; padding:18px; border-radius:12px; border:1px solid #e2e8f0; }
+    .stat h4 { margin:0 0 6px; font-size:12px; color:#64748b; text-transform:uppercase; }
+    .stat .num { font-size:28px; font-weight:800; }
+    .card { background:#fff; border-radius:12px; border:1px solid #e2e8f0; padding:20px; margin-bottom:20px; }
+    .item { border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+    .btn { padding:9px 14px; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:13px; }
+    .btn-ok { background:#10b981; color:#fff; }
+    .btn-fin { background:#2563eb; color:#fff; }
+  </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>LEYA Platform </h2>
-        <p>Introdu userul și parola pentru acces</p>
-
-        <div id="mesaj-eroare" class="eroare"></div>
-
-        <form onsubmit="conectare(event)">
-            <label>User / E-mail</label>
-            <input type="text" id="user-input" placeholder="ex: admin@leya.ro" required>
-
-            <label>Parolă</label>
-            <input type="password" id="parola-input" placeholder="••••••" required>
-
-            <button type="submit">Intră în cont</button>
-        </form>
+  <div class="top">
+    <a href="/" class="logo"><span>LY</span> PLATFORMA LEYA — PORTAL FIRMĂ</a>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span id="nume-firma" style="font-size:13px; color:#38bdf8; font-weight:700;"></span>
+      <button onclick="localStorage.clear(); window.location.href='/login.html';" style="background:#ef4444; color:#fff; border:none; padding:7px 12px; border-radius:6px; cursor:pointer; font-weight:600;">Ieșire</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat" style="border-left:4px solid #f59e0b;"><h4>Oferte spre aprobare</h4><div class="num" id="cnt-aprobare">0</div></div>
+      <div class="stat" style="border-left:4px solid #2563eb;"><h4>Oferte în curs de finalizare</h4><div class="num" id="cnt-curs">0</div></div>
+      <div class="stat" style="border-left:4px solid #10b981;"><h4>Oferte finalizate</h4><div class="num" id="cnt-fin">0</div></div>
     </div>
 
-    <script>
-        // Șterge orice sesiune veche blocată când deschizi pagina de login
-        localStorage.removeItem('leya_rol');
-        localStorage.removeItem('leya_nume');
-        localStorage.removeItem('leya_email');
+    <div class="card">
+      <h3 style="margin-top:0; color:#b45309;">1. Oferte care așteaptă spre aprobare</h3>
+      <p style="font-size:13px; color:#64748b; margin-top:-8px;">Vedeți lucrarea, zona și prețul calculat. Adresa exactă și telefonul devin vizibile imediat după aprobare.</p>
+      <div id="lista-aprobare"></div>
+    </div>
 
-        async function conectare(event) {
-            event.preventDefault();
-            const casutaEroare = document.getElementById('mesaj-eroare');
-            casutaEroare.style.display = 'none';
+    <div class="card">
+      <h3 style="margin-top:0; color:#1d4ed8;">2. Oferte în curs de finalizare (Date execuție & echipă)</h3>
+      <div id="lista-curs"></div>
+    </div>
 
-            const email = document.getElementById('user-input').value;
-            const parola = document.getElementById('parola-input').value;
+    <div class="card">
+      <h3 style="margin-top:0; color:#047857;">3. Oferte finalizate</h3>
+      <div id="lista-fin"></div>
+    </div>
+  </div>
+  <script>
+    const emailFirma = localStorage.getItem('leya_email');
+    const rol = localStorage.getItem('leya_rol');
+    if (!emailFirma || rol !== 'FIRMA') window.location.href = '/login.html';
+    document.getElementById('nume-firma').innerText = localStorage.getItem('leya_nume') || emailFirma;
 
-            try {
-                const raspuns = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, parola })
-                });
+    async function incarcaOferteFirma() {
+      const r = await fetch('/api/firma/oferte?firmaEmail=' + encodeURIComponent(emailFirma));
+      const oferte = await r.json();
+      const spreAprobare = oferte.filter(o => o.status === 'Spre aprobare');
+      const inCurs = oferte.filter(o => o.status === 'In curs de finalizare');
+      const finalizate = oferte.filter(o => o.status === 'Finalizata');
 
-                const rezultat = await raspuns.json();
+      document.getElementById('cnt-aprobare').innerText = spreAprobare.length;
+      document.getElementById('cnt-curs').innerText = inCurs.length;
+      document.getElementById('cnt-fin').innerText = finalizate.length;
 
-                if (rezultat.succes) {
-                    localStorage.setItem('leya_rol', rezultat.rol);
-                    localStorage.setItem('leya_nume', rezultat.nume);
-                    localStorage.setItem('leya_email', rezultat.email);
+      document.getElementById('lista-aprobare').innerHTML = spreAprobare.length ? spreAprobare.map(o => `
+        <div class="item">
+          <div>
+            <strong>Oferta #${o.id} — ${o.produs}</strong><br>
+            <span style="font-size:13px; color:#475569;">Zonă: <strong>${o.oras || 'Confidențial'}</strong> | Preț aprobat deviz: <strong style="color:#0f172a;">${o.pret}</strong></span><br>
+            <span style="font-size:12px; color:#94a3b8;"> Adresa exactă și telefonul clientului se deblochează după aprobare</span>
+          </div>
+          <button class="btn btn-ok" onclick="schimbaStatus(${o.id}, 'In curs de finalizare')"> Aprobă Oferta</button>
+        </div>`).join('') : '<p style="color:#94a3b8; font-size:13px;">Nu aveți oferte noi spre aprobare momentan.</p>';
 
-                    if (rezultat.rol === 'ADMIN') {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        window.location.href = 'client-panel.html';
-                    }
-                } else {
-                    casutaEroare.innerText = rezultat.mesaj;
-                    casutaEroare.style.display = 'block';
-                }
-            } catch (err) {
-                casutaEroare.innerText = "Serverul nu raspunde! Verifica terminalul din VS Code.";
-                casutaEroare.style.display = 'block';
-            }
-        }
-    </script>
+      document.getElementById('lista-curs').innerHTML = inCurs.length ? inCurs.map(o => `
+        <div class="item" style="border-left:4px solid #2563eb;">
+          <div>
+            <strong>Oferta #${o.id} — ${o.produs} (${o.pret})</strong><br>
+            <span style="font-size:13px; color:#0f172a;"> Adresă execuție: <strong>${o.oras || ''}, ${o.adresa || '-'}</strong></span><br>
+            <span style="font-size:13px; color:#0f172a;"> Telefon contact: <strong>${o.telefon || '-'}</strong></span>
+          </div>
+          <button class="btn btn-fin" onclick="schimbaStatus(${o.id}, 'Finalizata')">Marchează Finalizată ✓</button>
+        </div>`).join('') : '<p style="color:#94a3b8; font-size:13px;">Nicio lucrare în curs de finalizare.</p>';
+
+      document.getElementById('lista-fin').innerHTML = finalizate.length ? finalizate.map(o => `
+        <div class="item" style="background:#f8fafc;">
+          <div><strong>Oferta #${o.id} — ${o.produs}</strong> (${o.pret}) • <span style="color:#10b981; font-weight:700;">Finalizată</span></div>
+        </div>`).join('') : '<p style="color:#94a3b8; font-size:13px;">Încă nu aveți lucrări finalizate.</p>';
+    }
+
+    async function schimbaStatus(id, status) {
+      await fetch('/api/firma/status-oferta', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status })
+      });
+      incarcaOferteFirma();
+    }
+    incarcaOferteFirma();
+  </script>
 </body>
 </html>

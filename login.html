@@ -30,7 +30,10 @@
             <label>User / E-mail</label>
             <input type="text" id="u-email" placeholder="ex: admin@leya.ro" required>
             <label>Parolă</label>
-            <input type="password" id="u-parola" placeholder="••••••" required>
+            <div style="position:relative;">
+        <input type="password" id="u-parola" placeholder="••••••••" required style="padding-right:42px;">
+        <button type="button" onclick="comutaParola()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:18px; width:auto; margin:0; padding:0;" title="Arată / Ascunde parola"></button>
+      </div>
             <button type="submit">Intră în platformă</button>
         </form>
     </div>
@@ -58,7 +61,23 @@
                 localStorage.setItem('leya_email', rez.email);
                 localStorage.setItem('leya_domeniu', rez.domeniu);
 
-                if (rez.rol === 'ADMIN' || rez.rol === 'FIRMA') {
+               if (rez.rol === 'ADMIN') {
+          window.location.href = 'dashboard.html';
+        } else if (rez.rol === 'FIRMA') {
+          window.location.href = 'portal-firma.html';
+        } else {
+          window.location.href = 'client-panel.html';
+        }
+      } else {
+        err.innerText = rez.mesaj;
+        err.style.display = 'block';
+      }
+    }
+    function comutaParola() {
+      const camp = document.getElementById('u-parola');
+      camp.type = camp.type === 'password' ? 'text' : 'password';
+    }
+  </script>
                     window.location.href = 'dashboard.html';
                 } else {
                     window.location.href = 'client-panel.html';

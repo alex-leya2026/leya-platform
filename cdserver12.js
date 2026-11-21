@@ -265,27 +265,73 @@ app.post('/api/admin/creare-client', (req, res) => {
 
   res.json({ succes: true, mesaj: 'Contul pentru ' + nume + ' a fost creat!' });
 });
-// 4. CLIENTI FINALI
-app.post('/api/admin/creare-client', (req, res) => {
-    const nume = (req.body.nume || '').trim();
-    const email = (req.body.email || '').trim().toLowerCase();
-    const parola = (req.body.parola || '').trim();
-    const telefon = (req.body.telefon || '-').trim();
-    const firmaEmail = (req.body.firmaEmail || 'admin@leya.ro').trim().toLowerCase();
+// 5. OFERTE & CERERI CLIENTI SIMPLI
+app.post('/api/cerere-client-simplu', (req, res) => {
+  const { categorie, detalii, nume, telefon, email, oras, adresa } = req.body;
+  const oferte = incarcaOferte();
+  const cerereNoua = {
+    id: 100 + oferte.length + 1,
+    firmaEmail: 'admin@leya.ro',
+    clientEmail: email || '-',
+    clientNume: nume,
+    telefon,
+    oras,
+    adresa,
+    produs: categorie + ' — ' + detalii,
+    pret: 'De calculat de Admin',
+    status: 'Cerere noua client',
+    data: new Date().toLocaleDateString('ro-RO')
+  };
+  oferte.push(cerereNoua);
+  fs.writeFileSync(FISIER_OFERTE, JSON.stringify(oferte, null, 2));
+  res.json({ succes: true, mesaj: 'Cererea ta #' + cerereNoua.id + ' a fost trimisă către Administratorul LEYA! Vei fi contactat în scurt timp.' });
+});
 
-    if (!nume || !email || !parola) {
-        return res.status(400).json({ succes: false, mesaj: "Completeaza numele, userul si parola!" });
+app.post('/api/admin/creare-oferta', (req, res) => {
+  const { firmaEmail, clientEmail, clientNume, telefon, oras, adresa, produs, pret, status } = req.body;
+  const utilizatori = incarcaUtilizatori();
+  const client = utilizatori.find(u => u.email.toLowerCase() === (clientEmail || '').toLowerCase());
+
+  const oferte = incarcaOferte();
+  const ofertaNoua = {
+    id: 100 + oferte.length + 1,
+    firmaEmail: (firmaEmail || 'admin@leya.ro').toLowerCase(),
+    clientEmail: client ? client.email : (clientEmail || '-'),
+    clientNume: client ? client.nume : (clientNume || 'Client'),
+    telefon: telefon || (client ? client.telefon : '-'),
+    oras: oras || '-',
+    adresa: adresa || '-',
+    produs: produs || 'Oferta calculata',
+    pret: pret || '0 €',
+    status: status || 'Spre aprobare',
+    data: new Date().toLocaleDateString('ro-RO')
+  };
+
+  oferte.push(ofertaNoua);
+  fs.writeFileSync(FISIER_OFERTE, JSON.stringify(oferte, null, 2));
+  res.json({ succes: true, mesaj: 'Oferta #' + ofertaNoua.id + ' (' + ofertaNoua.pret + ') a fost trimisă spre aprobare!' });
+});
+
+app.get('/api/firma/oferte', (req, res) => {
+  const firmaEmail = (req.query.firmaEmail || '').toLowerCase();
+  const oferte = incarcaOferte().filter(o => (o.firmaEmail || '').toLowerCase() === firmaEmail);
+  const protejate = oferte.map(o => {
+    if (o.status === 'Spre aprobare') {
+      return { id: o.id, produs: o.produs, pret: o.pret, oras: o.oras, status: o.status, data: o.data };
     }
+    return o;
+  });
+  res.json(protejate);
+});
 
-    const utilizatori = incarcaUtilizatori();
-    if (utilizatori.find(u => u.email.toLowerCase() === email)) {
-        return res.status(400).json({ succes: false, mesaj: "Acest user exista deja!" });
-    }
-
-    utilizatori.push({ nume, email, parola, telefon, rol: 'CLIENT', firmaEmail });
-    fs.writeFileSync(FISIER_UTILIZATORI, JSON.stringify(utilizatori, null, 2));
-
-    res.json({ succes: true, mesaj: "Contul pentru " + nume + " a fost creat!" });
+app.post('/api/firma/status-oferta', (req, res) => {
+  const { id, status } = req.body;
+  const oferte = incarcaOferte();
+  const idx = oferte.findIndex(o => o.id === parseInt(id));
+  if (idx === -1) return res.status(404).json({ succes: false });
+  oferte[idx].status = status;
+  fs.writeFileSync(FISIER_OFERTE, JSON.stringify(oferte, null, 2));
+  res.json({ succes: true });
 });
 
 app.get('/api/admin/clienti', (req, res) => {
