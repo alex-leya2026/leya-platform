@@ -129,7 +129,13 @@ function incarcaOferte() {
     app.get('/', (req, res) => {
   res.sendFile(__dirname + '/LEYAindex12.html');
 });
+app.get('/cerere-lucrare.html', (req, res) => {
+  res.sendFile(__dirname + '/cerere-lucrare.html');
+});
 
+app.get('/portal-firma.html', (req, res) => {
+  res.sendFile(__dirname + '/portal-firma.html');
+});
 // 1. LOGARE CU VERIFICARE ABONAMENT LUNAR
 app.post('/api/auth/login', (req, res) => {
     const email = (req.body.email || '').trim().toLowerCase();
