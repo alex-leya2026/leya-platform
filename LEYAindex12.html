@@ -118,19 +118,13 @@
   </style>
 </head>
 <body>
-  <div style="background:#0f172a; padding:10px 20px; display:flex; justify-content:space-between; align-items:center;">
-    <a href="/dashboard.html" style="background:#2563eb; color:white; padding:8px 14px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:13px;"> Înapoi la Panou Admin & Clienți</a>
-    <span style="color:#38bdf8; font-weight:bold; font-size:14px;">LEYA — Calculator Tehnic</span>
-</div>
 
   <!-- Bara de Sus -->
   <nav class="navbar">
-    <div class="logo">
-      <span>LY</span> PLATFORMA LEYA
-    </div>
+    <div class="logo"><span>LY</span> PLATFORMA LEYA</div>
     <div class="nav-actions">
-      <a href="solicita-oferta.html" class="btn btn-admin" style="border-color:#2563eb; color:#60a5fa;">Cere Ofertă</a>
-      <a href="dashboard.html" class="btn btn-admin">Ecran Tehnic / Admin →</a>
+      <a href="#abonamente" class="btn btn-admin" style="border-color:#38bdf8; color:#38bdf8;">Abonamente Firme</a>
+      <a href="/login.html" class="btn btn-admin" style="background:#2563eb; border-color:#2563eb; color:#fff;">Autentificare (User & Parolă) →</a>
     </div>
   </nav>
 
@@ -142,25 +136,18 @@
 
     <!-- Cele 3 Butoane Principale -->
     <div class="hero-buttons">
-      <a href="solicita-oferta.html" class="btn btn-hero-primary">
-        ✦ Solicită o Ofertă Gratuită
-      </a>
-      <a href="portal-firma.html" class="btn btn-hero-secondary">
-         Sunt Firmă — Vreau Clienți (Abonamente)
-      </a>
-      <a href="dashboard.html" class="btn btn-hero-secondary">
-         Deschide Ecranul Tehnic
-      </a>
+      <a href="#abonamente" class="btn btn-hero-primary">✦ Alege Abonament Firmă (Plată Card)</a>
+      <a href="/login.html" class="btn btn-hero-secondary">Am deja User & Parolă — Intră în Cont</a>
     </div>
 
     <div class="trust-bar">
       <div class="trust-item">
-        <strong>100% Gratuit</strong>
-        <span>Pentru clienții care cer oferte</span>
+        <strong>100% Verificat</strong>
+        <span>Acces securizat pe bază de cont</span>
       </div>
       <div class="trust-item">
-        <strong>5 Domenii</strong>
-        <span>Construcții, Electrice, Sanitare, Acoperiș</span>
+        <strong>5 Domenii Tehnice</strong>
+        <span>Construcții, PVC, Tablă, Garduri, Curățenie</span>
       </div>
       <div class="trust-item">
         <strong>Deviz Rapid</strong>
@@ -169,62 +156,144 @@
     </div>
   </header>
 
-  <!-- Secțiunea Cum Funcționează / Acces Rapid -->
+  <!-- Secțiunea Cum Funcționează -->
   <section class="section">
     <div class="section-header">
       <h2>Alege cum vrei să folosești Platforma LEYA</h2>
-      <p>Fie că ai nevoie de o lucrare acasă, fie că administrezi o firmă de execuție, totul este la un click distanță.</p>
+      <p>Fie că ai nevoie de o lucrare acasă, fie că administrezi o firmă de execuție</p>
     </div>
 
     <div class="cards-grid">
       <div class="card">
         <div class="card-icon">1</div>
         <h3>Pentru Clienți (Persoane & Firme)</h3>
-        <p>Selectezi categoria lucrării, bifezi exact ce vrei să repari sau să construiești și primești oferte fără bătăi de cap.</p>
-        <a href="solicita-oferta.html" class="card-link">Completează formularul de cerere →</a>
+        <p>Primești user și parolă dedicată și vizualizezi ofertele și devizele primite în timp real.</p>
+        <a href="/login.html" class="card-link">Intră în Portalul Client →</a>
       </div>
 
       <div class="card">
         <div class="card-icon">2</div>
         <h3>Pentru Firme Mici & Echipe</h3>
-        <p>Abonează-te lunar la LEYA și primește acces direct la cererile clienților din domeniul tău, fără comisioane ascunse.</p>
-        <a href="portal-firma.html" class="card-link">Vezi abonamentele lunare →</a>
+        <p>Alege unul dintre cele 3 abonamente lunare, plătește online cu cardul și primești contul activat.</p>
+        <a href="#abonamente" class="card-link">Vezi cele 3 abonamente lunare ↓</a>
       </div>
 
       <div class="card">
         <div class="card-icon">3</div>
         <h3>Panou Management & Devize</h3>
-        <p>Gestionează cererile primite, calculează automat prețul pe metru pătrat cu materiale și generează oferte PDF.</p>
-        <a href="dashboard.html" class="card-link">Intră în Dashboard Administrator →</a>
+        <p>Gestionează cererile primite și calculează automat prețul pe metru pătrat cu tarifele tale.</p>
+        <a href="/login.html" class="card-link">Conectare Panou Firmă / Admin →</a>
       </div>
     </div>
   </section>
 
+  <!-- SECȚIUNEA ABONAMENTE CU PLATĂ ONLINE CU CARDUL -->
+  <section class="section" id="abonamente" style="padding-top:20px;">
+    <div class="section-header">
+      <h2>Abonamente Lunare pentru Firme</h2>
+      <p>Selectează pachetul potrivit, achită online cu cardul și primești imediat userul și parola de acces</p>
+    </div>
+
+    <div class="cards-grid">
+      <!-- Abonament 1: START -->
+      <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="font-size:12px; font-weight:700; color:#38bdf8; text-transform:uppercase; margin-bottom:6px;">Pachet 1</div>
+          <h3 style="font-size:22px; margin-bottom:4px;">Abonament START</h3>
+          <div style="font-size:32px; font-weight:800; color:#fff; margin:12px 0;">29 € <span style="font-size:14px; font-weight:400; color:#94a3b8;">/ lună</span></div>
+          <ul style="list-style:none; padding:0; margin:16px 0; font-size:14px; color:#cbd5e1; line-height:2;">
+            <li>✓ 1 Domeniu de activitate activ</li>
+            <li>✓ Panou propriu de tarife & devize</li>
+            <li>✓ Până la 15 oferte / clienți activi</li>
+            <li>✓ User și parolă dedicată</li>
+          </ul>
+        </div>
+        <button onclick="deschidePlataAbonament('Abonament START', '29 € / lună', 'https://stripe.com')" class="btn btn-hero-secondary" style="width:100%; cursor:pointer; text-align:center;">Plătește cu Cardul — 29 €</button>
+      </div>
+
+      <!-- Abonament 2: STANDARD -->
+      <div class="card" style="border:2px solid #3b82f6; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:inline-block; background:#2563eb; color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:8px;">CEL MAI ALES</div>
+          <h3 style="font-size:22px; margin-bottom:4px;">Abonament STANDARD</h3>
+          <div style="font-size:32px; font-weight:800; color:#fff; margin:12px 0;">59 € <span style="font-size:14px; font-weight:400; color:#94a3b8;">/ lună</span></div>
+          <ul style="list-style:none; padding:0; margin:16px 0; font-size:14px; color:#cbd5e1; line-height:2;">
+            <li>✓ Până la 3 Domenii de activitate</li>
+            <li>✓ Calculator automat devize & tarife</li>
+            <li>✓ Clienți și oferte nelimitate</li>
+            <li>✓ Activare prioritară user & parolă</li>
+          </ul>
+        </div>
+        <button onclick="deschidePlataAbonament('Abonament STANDARD', '59 € / lună', 'https://stripe.com')" class="btn btn-hero-primary" style="width:100%; cursor:pointer; text-align:center;">Plătește cu Cardul — 59 €</button>
+      </div>
+
+      <!-- Abonament 3: PRO -->
+      <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="font-size:12px; font-weight:700; color:#10b981; text-transform:uppercase; margin-bottom:6px;">Pachet 3</div>
+          <h3 style="font-size:22px; margin-bottom:4px;">Abonament PRO</h3>
+          <div style="font-size:32px; font-weight:800; color:#fff; margin:12px 0;">99 € <span style="font-size:14px; font-weight:400; color:#94a3b8;">/ lună</span></div>
+          <ul style="list-style:none; padding:0; margin:16px 0; font-size:14px; color:#cbd5e1; line-height:2;">
+            <li>✓ Toate cele 5 Domenii incluse</li>
+            <li>✓ Conturi multiple pentru echipă</li>
+            <li>✓ Vizibilitate maximă în platformă</li>
+            <li>✓ Suport tehnic dedicat 24/7</li>
+          </ul>
+        </div>
+        <button onclick="deschidePlataAbonament('Abonament PRO', '99 € / lună', 'https://stripe.com')" class="btn btn-hero-secondary" style="width:100%; cursor:pointer; text-align:center;">Plătește cu Cardul — 99 €</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fereastră Plată Card Online -->
+  <div id="modal-plata-card" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.85); z-index:999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#0f172a; border:1px solid #334155; border-radius:16px; padding:24px; max-width:420px; width:100%; color:#fff;">
+      <h3 id="titlu-abonament-ales" style="margin:0 0 6px 0; font-size:20px;">Activare Abonament</h3>
+      <p id="pret-abonament-ales" style="margin:0 0 16px 0; color:#38bdf8; font-weight:700;"></p>
+      <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:4px;">Nume Firmă / Persoană:</label>
+      <input type="text" id="pay-nume" placeholder="ex: Construct SRL" style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#1e293b; color:#fff; margin-bottom:10px; box-sizing:border-box;">
+      <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:4px;">E-mail (pe care vei primi userul și parola):</label>
+      <input type="email" id="pay-email" placeholder="ex: contact@firma.ro" style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#1e293b; color:#fff; margin-bottom:10px; box-sizing:border-box;">
+      <label style="display:block; font-size:12px; color:#94a3b8; margin-bottom:4px;">Telefon:</label>
+      <input type="text" id="pay-telefon" placeholder="ex: 0722123456" style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#1e293b; color:#fff; margin-bottom:16px; box-sizing:border-box;">
+      <button onclick="continuaSprePlataCard()" style="width:100%; padding:12px; border:none; border-radius:8px; background:#2563eb; color:#fff; font-weight:700; cursor:pointer; margin-bottom:8px;">Continuă spre Plata cu Cardul →</button>
+      function continuaSprePlataCard() {
+      const nume = document.getElementById('pay-nume').value.trim();
+      const email = document.getElementById('pay-email').value.trim();
+      const tel = document.getElementById('pay-telefon').value.trim();
+      if (!nume || !email || !tel) return alert('Completează numele firmei, e-mailul și telefonul înainte de plată!');
+      alert('Datele firmei "' + nume + '" au fost înregistrate! După confirmarea plății cu cardul, vei primi pe ' + email + ' userul și parola de acces.');
+      if (linkStripeSelectat && !linkStripeSelectat.includes('test_')) {
+        window.open(linkStripeSelectat + '?prefilled_email=' + encodeURIComponent(email), '_blank');
+      }
+      document.getElementById('modal-plata-card').style.display = 'none';
+    }
+  </script>
+
   <footer>
     © 2026 Platforma LEYA — Management Tehnic, Oferte & Parteneriate Firme Mici.
   </footer>
-<!-- BARA FIXA DE JOS DINAMICA -->
-<div class="bara-jos-leya" id="bara-jos">
+
+  <div class="bara-jos-leya" id="bara-jos">
     LEYA - Platforma Conectare Clienti si Firme
-</div>
+  </div>
 
-<script>
-    // Verificam automat cine este logat in browser si actualizam bara de jos
+  <script>
     window.addEventListener('DOMContentLoaded', () => {
-        const rolSalvat = localStorage.getItem('leya_rol');
-        const numeSalvat = localStorage.getItem('leya_nume');
-        const bara = document.getElementById('bara-jos');
+      const rolSalvat = localStorage.getItem('leya_rol');
+      const numeSalvat = localStorage.getItem('leya_nume');
+      const bara = document.getElementById('bara-jos');
 
-        if (rolSalvat === 'ADMIN') {
-            bara.innerText = 'LEYA';
-            bara.style.backgroundColor = '#0f172a';
-            bara.style.color = '#38bdf8';
-        } else if (rolSalvat === 'CLIENT') {
-            bara.innerText = 'Cont Client: ' + numeSalvat + ' | Verificare Oferte & Status';
-            bara.style.backgroundColor = '#1e293b';
-            bara.style.color = '#10b981';
-        }
+      if (rolSalvat === 'ADMIN') {
+        bara.innerText = 'LEYA';
+        bara.style.backgroundColor = '#0f172a';
+        bara.style.color = '#38bdf8';
+      } else if (rolSalvat === 'CLIENT') {
+        bara.innerText = 'Cont Client: ' + numeSalvat + ' | Verificare Oferte';
+        bara.style.backgroundColor = '#1e293b';
+        bara.style.color = '#10b981';
+      }
     });
-</script>
+  </script>
 </body>
 </html>

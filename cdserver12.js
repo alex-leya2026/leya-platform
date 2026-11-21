@@ -126,7 +126,9 @@ function incarcaOferte() {
 }
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/login.html');
+    app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/LEYAindex12.html');
+});
 });
 
 // 1. LOGARE CU VERIFICARE ABONAMENT LUNAR
